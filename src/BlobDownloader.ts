@@ -52,10 +52,7 @@ export default class BlobDownloader {
 
     public static async download(url: string, defaultName?: string) {
         let ins = BlobDownloader.instance;
-        if (defaultName) {
-            ins.link.download = defaultName;
-        }
         await ins.update(url);
-        return ins.download();
+        return ins.download(defaultName);
     }
 }

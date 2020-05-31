@@ -12,8 +12,8 @@ export default class BlobDownloader {
     private static readonly instance;
     private readonly link;
     private blobUrl;
-    constructor(url?: string);
-    update(url: string): Promise<void>;
-    download(): void;
-    static download(url: string): Promise<BlobDownloader>;
+    constructor(url?: string, defaultName?: string);
+    update(url: string, defaultName?: string): Promise<void>;
+    download(defaultName?: string): this;
+    static download(url: string, defaultName?: string): Promise<BlobDownloader>;
 }
