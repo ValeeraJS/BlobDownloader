@@ -60,36 +60,39 @@
 	 * @author hypnosnova / https://github.com/HypnosNova
 	 */
 	var BlobDownloader = /** @class */ (function () {
-	    function BlobDownloader(url, defaultName) {
+	    function BlobDownloader(urlOrBlob, fileName) {
 	        this.state = BlobDownloader.NONE;
 	        this.link = document.createElement('a');
-	        if (url) {
-	            this.update(url, defaultName);
+	        if (urlOrBlob) {
+	            this.update(urlOrBlob, fileName);
 	        }
 	    }
-	    BlobDownloader.prototype.update = function (url, defaultName) {
+	    BlobDownloader.prototype.update = function (urlOrBlob, fileName) {
 	        return __awaiter(this, void 0, void 0, function () {
 	            var _this = this;
 	            return __generator(this, function (_a) {
-	                this.link.download = defaultName || "download";
+	                this.link.download = fileName || "download";
 	                this.state = BlobDownloader.PROGRESSING;
-	                return [2 /*return*/, fetch(url).then(function (res) {
-	                        return res.blob();
-	                    }).then(function (blob) {
-	                        _this.state = BlobDownloader.READY;
-	                        _this.blob = blob;
-	                        _this.blobUrl = URL.createObjectURL(blob);
-	                        _this.link.href = _this.blobUrl;
-	                    }).catch(function (error) {
-	                        _this.state = BlobDownloader.ERROR;
-	                        console.error(error);
-	                    })];
+	                if (typeof urlOrBlob === "string") {
+	                    return [2 /*return*/, fetch(urlOrBlob).then(function (res) {
+	                            return res.blob();
+	                        }).then(function (blob) {
+	                            _this.setBlob(blob);
+	                            return _this;
+	                        }).catch(function (error) {
+	                            _this.state = BlobDownloader.ERROR;
+	                            console.error(error);
+	                        })];
+	                }
+	                else {
+	                    return [2 /*return*/, Promise.resolve(this.setBlob(urlOrBlob))];
+	                }
 	            });
 	        });
 	    };
-	    BlobDownloader.prototype.download = function (defaultName) {
-	        if (defaultName) {
-	            this.link.download = defaultName;
+	    BlobDownloader.prototype.download = function (fileName) {
+	        if (fileName) {
+	            this.link.download = fileName;
 	        }
 	        if (this.state === BlobDownloader.READY) {
 	            this.link.click();
@@ -113,6 +116,13 @@
 	                }
 	            });
 	        });
+	    };
+	    BlobDownloader.prototype.setBlob = function (blob) {
+	        this.state = BlobDownloader.READY;
+	        this.blob = blob;
+	        this.blobUrl = URL.createObjectURL(blob);
+	        this.link.href = this.blobUrl;
+	        return this;
 	    };
 	    BlobDownloader.READY = 1;
 	    BlobDownloader.NONE = 0;

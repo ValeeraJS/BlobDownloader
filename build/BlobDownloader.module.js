@@ -2,31 +2,34 @@
  * @author hypnosnova / https://github.com/HypnosNova
  */
 class BlobDownloader {
-    constructor(url, defaultName) {
+    constructor(urlOrBlob, fileName) {
         this.state = BlobDownloader.NONE;
         this.link = document.createElement('a');
-        if (url) {
-            this.update(url, defaultName);
+        if (urlOrBlob) {
+            this.update(urlOrBlob, fileName);
         }
     }
-    async update(url, defaultName) {
-        this.link.download = defaultName || "download";
+    async update(urlOrBlob, fileName) {
+        this.link.download = fileName || "download";
         this.state = BlobDownloader.PROGRESSING;
-        return fetch(url).then((res) => {
-            return res.blob();
-        }).then((blob) => {
-            this.state = BlobDownloader.READY;
-            this.blob = blob;
-            this.blobUrl = URL.createObjectURL(blob);
-            this.link.href = this.blobUrl;
-        }).catch((error) => {
-            this.state = BlobDownloader.ERROR;
-            console.error(error);
-        });
+        if (typeof urlOrBlob === "string") {
+            return fetch(urlOrBlob).then((res) => {
+                return res.blob();
+            }).then((blob) => {
+                this.setBlob(blob);
+                return this;
+            }).catch((error) => {
+                this.state = BlobDownloader.ERROR;
+                console.error(error);
+            });
+        }
+        else {
+            return Promise.resolve(this.setBlob(urlOrBlob));
+        }
     }
-    download(defaultName) {
-        if (defaultName) {
-            this.link.download = defaultName;
+    download(fileName) {
+        if (fileName) {
+            this.link.download = fileName;
         }
         if (this.state === BlobDownloader.READY) {
             this.link.click();
@@ -40,6 +43,13 @@ class BlobDownloader {
         let ins = BlobDownloader.instance;
         await ins.update(url);
         return ins.download(defaultName);
+    }
+    setBlob(blob) {
+        this.state = BlobDownloader.READY;
+        this.blob = blob;
+        this.blobUrl = URL.createObjectURL(blob);
+        this.link.href = this.blobUrl;
+        return this;
     }
 }
 BlobDownloader.READY = 1;

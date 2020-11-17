@@ -16,31 +16,34 @@ export default class BlobDownloader {
     private readonly link = document.createElement('a');
     private blobUrl: string;
 
-    constructor(url?: string, defaultName?: string) {
-        if (url) {
-            this.update(url, defaultName);
+    constructor(urlOrBlob?: string | Blob, fileName?: string) {
+        if (urlOrBlob) {
+            this.update(urlOrBlob, fileName);
         }
     }
 
-    public async update(url: string, defaultName?: string) {
-        this.link.download = defaultName || "download";
+    public async update(urlOrBlob: string | Blob, fileName?: string) {
+        this.link.download = fileName || "download";
         this.state = BlobDownloader.PROGRESSING;
-        return fetch(url).then((res: Response) => {
-            return res.blob();
-        }).then((blob: Blob) => {
-            this.state = BlobDownloader.READY;
-            this.blob = blob;
-            this.blobUrl = URL.createObjectURL(blob);
-            this.link.href = this.blobUrl;
-        }).catch((error: any) => {
-            this.state = BlobDownloader.ERROR;
-            console.error(error);
-        });
+
+        if (typeof urlOrBlob === "string") {
+            return fetch(urlOrBlob).then((res: Response) => {
+                return res.blob();
+            }).then((blob: Blob) => {
+                this.setBlob(blob);
+                return this;
+            }).catch((error: any) => {
+                this.state = BlobDownloader.ERROR;
+                console.error(error);
+            });
+        } else {
+            return Promise.resolve(this.setBlob(urlOrBlob));
+        }
     }
 
-    public download(defaultName?: string) {
-        if (defaultName) {
-            this.link.download = defaultName;
+    public download(fileName?: string) {
+        if (fileName) {
+            this.link.download = fileName;
         }
         if (this.state === BlobDownloader.READY) {
             this.link.click();
@@ -54,5 +57,13 @@ export default class BlobDownloader {
         let ins = BlobDownloader.instance;
         await ins.update(url);
         return ins.download(defaultName);
+    }
+
+    private setBlob(blob: Blob) {
+        this.state = BlobDownloader.READY;
+        this.blob = blob;
+        this.blobUrl = URL.createObjectURL(blob);
+        this.link.href = this.blobUrl;
+        return this;
     }
 }

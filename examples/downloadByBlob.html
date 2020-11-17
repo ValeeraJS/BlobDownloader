@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title></title>
+</head>
+
+<body>
+    <img src="test.png" id="testImg" />
+    <button id="btn">download</button>
+    <script src="../build/BlobDownloader.min.js"></script>
+    <script>
+        const btn = document.getElementById("btn");
+        const img = document.getElementById("testImg");
+
+        fetch(img.src).then((res) => {
+            return res.blob();
+        }).then((blob) => {
+            const downloader = new BlobDownloader(blob, "xxx.png");
+            btn.onclick = () => {
+                downloader.download();
+            }
+        });
+
+    </script>
+</body>
+
+</html>
