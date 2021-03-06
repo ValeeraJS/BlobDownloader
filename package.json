@@ -1,6 +1,6 @@
 {
 	"name": "@valeera/blobdownloader",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "Event dispatcher fit for most framework.",
 	"main": "build/BlobDownloader.js",
 	"repository": "ValeeraJS/BlobDownloader",
@@ -87,5 +87,8 @@
 			"build/BlobDownloader.legacy.module.js"
 		],
 		"directories": {}
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }
