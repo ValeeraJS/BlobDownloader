@@ -22,7 +22,7 @@ export default class BlobDownloader {
         }
     }
 
-    public async update(urlOrBlob: string | Blob, fileName?: string) {
+    public async update(urlOrBlob: string | Blob, fileName?: string): Promise<this> {
         this.link.download = fileName || "download";
         this.state = BlobDownloader.PROGRESSING;
 
@@ -35,13 +35,14 @@ export default class BlobDownloader {
             }).catch((error: any) => {
                 this.state = BlobDownloader.ERROR;
                 console.error(error);
+                return this;
             });
         } else {
             return Promise.resolve(this.setBlob(urlOrBlob));
         }
     }
 
-    public download(fileName?: string) {
+    public download(fileName?: string): this {
         if (fileName) {
             this.link.download = fileName;
         }
@@ -53,13 +54,13 @@ export default class BlobDownloader {
         return this;
     }
 
-    public static async download(url: string, defaultName?: string) {
+    public static async download(url: string | Blob, defaultName?: string): Promise<BlobDownloader> {
         let ins = BlobDownloader.instance;
         await ins.update(url);
         return ins.download(defaultName);
     }
 
-    private setBlob(blob: Blob) {
+    private setBlob(blob: Blob): this {
         this.state = BlobDownloader.READY;
         this.blob = blob;
         this.blobUrl = URL.createObjectURL(blob);

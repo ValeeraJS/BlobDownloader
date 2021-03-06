@@ -82,6 +82,7 @@
 	                        }).catch(function (error) {
 	                            _this.state = BlobDownloader.ERROR;
 	                            console.error(error);
+	                            return _this;
 	                        })];
 	                }
 	                else {

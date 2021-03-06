@@ -21,6 +21,7 @@ class BlobDownloader {
             }).catch((error) => {
                 this.state = BlobDownloader.ERROR;
                 console.error(error);
+                return this;
             });
         }
         else {
