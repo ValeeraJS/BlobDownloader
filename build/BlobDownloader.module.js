@@ -4,21 +4,29 @@
 class BlobDownloader {
     constructor(urlOrBlob, fileName) {
         this.state = BlobDownloader.NONE;
-        this.link = document.createElement('a');
+        this.link = document.createElement("a");
         if (urlOrBlob) {
             this.update(urlOrBlob, fileName);
         }
+    }
+    static async download(url, defaultName) {
+        const ins = BlobDownloader.instance;
+        await ins.update(url);
+        return ins.download(defaultName);
     }
     async update(urlOrBlob, fileName) {
         this.link.download = fileName || "download";
         this.state = BlobDownloader.PROGRESSING;
         if (typeof urlOrBlob === "string") {
-            return fetch(urlOrBlob).then((res) => {
+            return fetch(urlOrBlob)
+                .then((res) => {
                 return res.blob();
-            }).then((blob) => {
+            })
+                .then((blob) => {
                 this.setBlob(blob);
                 return this;
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 this.state = BlobDownloader.ERROR;
                 console.error(error);
                 return this;
@@ -39,11 +47,6 @@ class BlobDownloader {
             console.error("The file hasn't been ready.");
         }
         return this;
-    }
-    static async download(url, defaultName) {
-        let ins = BlobDownloader.instance;
-        await ins.update(url);
-        return ins.download(defaultName);
     }
     setBlob(blob) {
         this.state = BlobDownloader.READY;
