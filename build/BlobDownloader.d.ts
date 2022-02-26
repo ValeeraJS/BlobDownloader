@@ -2,10 +2,12 @@
  * @author hypnosnova / https://github.com/HypnosNova
  */
 export default class BlobDownloader {
-    static readonly READY = 1;
-    static readonly NONE = 0;
-    static readonly ERROR = -1;
-    static readonly PROGRESSING = 2;
+    static readonly State: {
+        ERROR: number;
+        NONE: number;
+        PROGRESSING: number;
+        READY: number;
+    };
     private static readonly instance;
     static download(url: string | Blob, defaultName?: string): Promise<BlobDownloader>;
     url: string;

@@ -3,10 +3,12 @@
  */
 
 export default class BlobDownloader {
-	public static readonly READY = 1;
-	public static readonly NONE = 0;
-	public static readonly ERROR = -1;
-	public static readonly PROGRESSING = 2;
+	public static readonly State = {
+		ERROR: -1,
+		NONE: 0,
+		PROGRESSING: 2,
+		READY: 1
+	};
 
 	private static readonly instance = new BlobDownloader();
 	public static async download(
@@ -22,7 +24,7 @@ export default class BlobDownloader {
 
 	public url: string;
 	public blob: Blob;
-	public state = BlobDownloader.NONE;
+	public state = BlobDownloader.State.NONE;
 
 	private readonly link = document.createElement("a");
 	private blobUrl: string;
@@ -35,7 +37,7 @@ export default class BlobDownloader {
 
 	public async update(urlOrBlob: string | Blob, fileName?: string): Promise<this> {
 		this.link.download = fileName || "download";
-		this.state = BlobDownloader.PROGRESSING;
+		this.state = BlobDownloader.State.PROGRESSING;
 
 		if (typeof urlOrBlob === "string") {
 			return fetch(urlOrBlob)
@@ -48,7 +50,7 @@ export default class BlobDownloader {
 					return this;
 				})
 				.catch((error: any) => {
-					this.state = BlobDownloader.ERROR;
+					this.state = BlobDownloader.State.ERROR;
 					console.error(error);
 
 					return this;
@@ -62,17 +64,17 @@ export default class BlobDownloader {
 		if (fileName) {
 			this.link.download = fileName;
 		}
-		if (this.state === BlobDownloader.READY) {
+		if (this.state === BlobDownloader.State.READY) {
 			this.link.click();
 		} else {
-			console.error("The file hasn't been ready.");
+			console.error("The file is not ready yet.");
 		}
 
 		return this;
 	}
 
 	private setBlob(blob: Blob): this {
-		this.state = BlobDownloader.READY;
+		this.state = BlobDownloader.State.READY;
 		this.blob = blob;
 		this.blobUrl = URL.createObjectURL(blob);
 		this.link.href = this.blobUrl;

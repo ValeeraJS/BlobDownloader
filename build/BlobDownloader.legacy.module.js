@@ -56,7 +56,7 @@ function __generator(thisArg, body) {
  */
 var BlobDownloader = /** @class */ (function () {
     function BlobDownloader(urlOrBlob, fileName) {
-        this.state = BlobDownloader.NONE;
+        this.state = BlobDownloader.State.NONE;
         this.link = document.createElement("a");
         if (urlOrBlob) {
             this.update(urlOrBlob, fileName);
@@ -82,7 +82,7 @@ var BlobDownloader = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 this.link.download = fileName || "download";
-                this.state = BlobDownloader.PROGRESSING;
+                this.state = BlobDownloader.State.PROGRESSING;
                 if (typeof urlOrBlob === "string") {
                     return [2 /*return*/, fetch(urlOrBlob)
                             .then(function (res) {
@@ -93,7 +93,7 @@ var BlobDownloader = /** @class */ (function () {
                             return _this;
                         })
                             .catch(function (error) {
-                            _this.state = BlobDownloader.ERROR;
+                            _this.state = BlobDownloader.State.ERROR;
                             console.error(error);
                             return _this;
                         })];
@@ -108,27 +108,30 @@ var BlobDownloader = /** @class */ (function () {
         if (fileName) {
             this.link.download = fileName;
         }
-        if (this.state === BlobDownloader.READY) {
+        if (this.state === BlobDownloader.State.READY) {
             this.link.click();
         }
         else {
-            console.error("The file hasn't been ready.");
+            console.error("The file is not ready yet.");
         }
         return this;
     };
     BlobDownloader.prototype.setBlob = function (blob) {
-        this.state = BlobDownloader.READY;
+        this.state = BlobDownloader.State.READY;
         this.blob = blob;
         this.blobUrl = URL.createObjectURL(blob);
         this.link.href = this.blobUrl;
         return this;
     };
-    BlobDownloader.READY = 1;
-    BlobDownloader.NONE = 0;
-    BlobDownloader.ERROR = -1;
-    BlobDownloader.PROGRESSING = 2;
+    BlobDownloader.State = {
+        ERROR: -1,
+        NONE: 0,
+        PROGRESSING: 2,
+        READY: 1
+    };
     BlobDownloader.instance = new BlobDownloader();
     return BlobDownloader;
 }());
 
 export default BlobDownloader;
+//# sourceMappingURL=BlobDownloader.legacy.module.js.map

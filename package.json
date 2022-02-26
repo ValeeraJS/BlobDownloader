@@ -1,6 +1,6 @@
 {
 	"name": "@valeera/blobdownloader",
-	"version": "0.1.7",
+	"version": "0.2.0",
 	"description": "Event dispatcher fit for most framework.",
 	"main": "build/BlobDownloader.js",
 	"repository": "ValeeraJS/BlobDownloader",
@@ -33,7 +33,7 @@
 	"keywords": [
 		"WebRTCRecorder",
 		"utils",
-		"module",
+		"tool",
 		"WebRTC",
 		"WebGL"
 	],
