@@ -10,24 +10,25 @@ export default class BlobDownloader {
 		READY: 1
 	};
 
-	private static readonly instance = new BlobDownloader();
+	// eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+	static readonly #instance = new BlobDownloader();
 	public static async download(
 		url: string | Blob,
 		defaultName?: string
 	): Promise<BlobDownloader> {
-		const ins = BlobDownloader.instance;
+		const ins = BlobDownloader.#instance;
 
 		await ins.update(url);
 
 		return ins.download(defaultName);
 	}
 
-	public url: string;
+	#preClick = false;
+
 	public blob: Blob;
 	public state = BlobDownloader.State.NONE;
 
-	private readonly link = document.createElement("a");
-	private blobUrl: string;
+	private readonly link = window.document.createElement("a");
 
 	public constructor(urlOrBlob?: string | Blob, fileName?: string) {
 		if (urlOrBlob) {
@@ -46,12 +47,16 @@ export default class BlobDownloader {
 				})
 				.then((blob: Blob) => {
 					this.setBlob(blob);
+					if (this.#preClick) {
+						this.download();
+					}
 
 					return this;
 				})
 				.catch((error: any) => {
 					this.state = BlobDownloader.State.ERROR;
 					console.error(error);
+					this.#preClick = false;
 
 					return this;
 				});
@@ -66,8 +71,13 @@ export default class BlobDownloader {
 		}
 		if (this.state === BlobDownloader.State.READY) {
 			this.link.click();
+			this.#preClick = false;
 		} else {
-			console.error("The file is not ready yet.");
+			if (this.state === BlobDownloader.State.PROGRESSING) {
+				this.#preClick = true;
+			} else {
+				console.error("The file is not ready yet.");
+			}
 		}
 
 		return this;
@@ -76,8 +86,7 @@ export default class BlobDownloader {
 	private setBlob(blob: Blob): this {
 		this.state = BlobDownloader.State.READY;
 		this.blob = blob;
-		this.blobUrl = URL.createObjectURL(blob);
-		this.link.href = this.blobUrl;
+		this.link.href = URL.createObjectURL(blob);
 
 		return this;
 	}

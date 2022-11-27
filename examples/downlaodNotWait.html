@@ -12,14 +12,14 @@
 	<body>
 		<img src="test.png" id="testImg" />
 		<button id="btn">download</button>
-		<script src="../build/BlobDownloader.min.js"></script>
+		<script src="../build/BlobDownloader.js"></script>
 		<script>
 			const btn = document.getElementById("btn");
 			const img = document.getElementById("testImg");
 
-			btn.onclick = () => {
-				BlobDownloader.download(img.src, "xxx.png");
-			};
+			const downloader = new BlobDownloader(img.src, "xxx.png");
+
+			downloader.download();
 		</script>
 	</body>
 </html>

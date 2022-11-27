@@ -1,27 +1,25 @@
-import json from "rollup-plugin-json";
 import typescript from "rollup-plugin-typescript2";
 
 export default {
 	input: "src/index.ts",
 	output: [
 		{
-			file: "build/BlobDownloader.legacy.js",
+			file: "build/BlobDownloader.js",
 			format: "umd",
 			indent: "\t",
 			name: "BlobDownloader",
 			sourcemap: true
 		},
 		{
-			file: "build/BlobDownloader.legacy.module.js",
+			file: "build/BlobDownloader.module.js",
 			format: "es",
 			indent: "\t",
-			sourcemap: true
+			sourcemap: false
 		}
 	],
 	plugins: [
-		json(),
 		typescript({
-			tsconfig: "./tsconfig.legacy.json"
+			tsconfig: "./tsconfig.json"
 		})
 	]
 };

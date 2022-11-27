@@ -1,0 +1,6 @@
+{
+	"extension": ["ts"],
+	"loader": ["ts-node"],
+	"recursive": "test /**/*.spec.ts",
+	"require": ["ts-node/register", "mocha-dom"]
+}
